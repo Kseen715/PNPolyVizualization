@@ -1,0 +1,18 @@
+﻿Build started...
+1>------ Build started: Project: PolyPoint, Configuration: Debug x64 ------
+1>C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(534,5): warning MSB8028: The intermediate directory (C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\Debug\) contains files shared from another project (example_win32_directx12.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+1>main.cpp
+1>C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\main.cpp(62,87): warning C4100: 'nCmdShow': unreferenced formal parameter
+1>C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\main.cpp(62,72): warning C4100: 'lpCmdLine': unreferenced formal parameter
+1>C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\main.cpp(62,51): warning C4100: 'hPrevInstance': unreferenced formal parameter
+1>C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\main.cpp(62,30): warning C4100: 'hInstance': unreferenced formal parameter
+1>PolyPoint.cpp
+1>C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\PolyPoint.cpp(11,17): error C2365: 'time': redefinition; previous definition was 'function'
+1>C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\ucrt\time.h(518): message : see declaration of 'time'
+1>C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\PolyPoint.cpp(18,41): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+1>C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\PolyPoint.cpp(97,87): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+1>C:\Users\Korenev\YandexDisk\main\work\VSProjects\ImGuiTest\code\PNPolyViz\PolyPoint.cpp(97,58): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+1>workTimeLib.cpp
+1>Generating Code...
+1>Done building project "PNPolyViz.vcxproj" -- FAILED.
+========== Build: 0 succeeded, 1 failed, 0 up-to-date, 0 skipped ==========
