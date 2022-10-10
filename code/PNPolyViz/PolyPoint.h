@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "imgui.h"
 #include "imgui_internal.h"
@@ -15,10 +15,10 @@
 
 #ifndef IM_VEC_2_PNP_SET
 #define IM_VEC_2_PNP_SET
-// Массивы двумерных векторов для pnpoly.
-// In - лежит в полигоне.
-// Out - не лежит в полигоне.
-// Indef - не определено.
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ pnpoly.
+// In - пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+// Out - пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
+// Indef - пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
 typedef struct imVec2pnpSet {
     std::vector<ImVec2> In;
     std::vector<ImVec2> Out;
@@ -34,17 +34,17 @@ namespace pnpoly
     imVec2pnpSet pnpolyUni(const std::vector<ImVec2>& points, const std::vector<ImVec2>& polygon, char(*func)(vec2, const std::vector<vec2>&));
 }
 
-namespace PolyPoint
+namespace PNPolyViz
 {
     constexpr float pointRadius = 2;
     constexpr float screenScale = 1;
     const ImU32 crossColor = IM_COL32(255, 255, 255, 25);
-    const ImU32 greenColor = IM_COL32(55, 255, 55, 255);
-    const ImU32 redColor = IM_COL32(255, 55, 55, 255);
-    const ImU32 purpleColor = IM_COL32(255, 0, 255, 255);
-    const ImU32 whiteColor = IM_COL32(255, 255, 255, 255);
+    const ImU32 inColor = IM_COL32(55, 255, 55, 255);
+    const ImU32 outColor = IM_COL32(255, 55, 55, 255);
+    const ImU32 indefColor = IM_COL32(255, 0, 255, 255);
+    const ImU32 polygonColor = IM_COL32(255, 255, 255, 255);
 
-    void DoWork();
+    void doWork();
 
     // draw a whiteboard with points from vector and polygons from vector
     void WhiteBoard(const std::vector<ImVec2>& pointsIn, const std::vector<ImVec2>& pointsOut, const std::vector<ImVec2>& pointsIndef, const std::vector<std::vector<ImVec2>>& polygons);

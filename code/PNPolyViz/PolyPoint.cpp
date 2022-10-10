@@ -1,19 +1,12 @@
-#include "PolyPoint.h"
-
-ImVec2 castToImVec2(vec2 vec) {
-    return ImVec2(vec.x, vec.y);
-}
-
-vec2 castToVec2(ImVec2 vec) {
-    return vec2(vec.x, vec.y);
-}
+п»ї#include "PolyPoint.h"
 
 namespace pnpoly
 {
-    //nonzero winding rule
+    // Test algorithm of Jordan curve theorem from
+    // https://wrfranklin.org/Research/Short_Notes/pnpoly.html#The%20C%20Code
     char simpleSolution(vec2 point, const std::vector<vec2>& polygon)
     {
-        int i, j, nvert = polygon.size();
+        size_t i, j, nvert = polygon.size();
         bool c = false;
 
         for (i = 0, j = nvert - 1; i < nvert; j = i++)
@@ -23,22 +16,68 @@ namespace pnpoly
                 c = !c;
         }
 
-        return c;
+        return (char)c;
     }
 
-    char nonZeroWindingRule(ImVec2 point, const std::vector<ImVec2>& polygon)
+    // Returns 1 if point if it to the left of the line, 0 if to the right
+    bool isLeft(vec2 pStart, vec2 pEnd, vec2 point)
     {
-
-        return 0;
+        return ((pEnd.x - pStart.x) * (point.y - pStart.y) -
+            (pEnd.y - pStart.y) * (point.x - pStart.x)) > 0;
     }
 
-    // non-winding rule for point and polygon realization, with function choose
+    // Non-zero winding algorithm for pnpoly
+    char nonZeroWindingRule(vec2 point, const std::vector<vec2>& polygon)
+    {
+        int wn = 0; // Winding number counter
+        size_t nvert = polygon.size(); // Count of polygon vertices
+
+        for (size_t i = 0; i < nvert; i++)
+        {
+            if (polygon[i].y <= point.y) // If first point of polygon is below point
+            {
+                if (polygon[(i + 1) % nvert].y > point.y) // If second point of polygon is above point
+                {
+                    if (isLeft(polygon[i], polygon[(i + 1) % nvert], point))
+                    {
+                        wn++; // Increase winding number
+                    }
+                }
+            }
+            else // If first point in polygon is above point
+            {
+                if (polygon[(i + 1) % nvert].y <= point.y) // If second point in polygon is below point
+                {
+                    if (!isLeft(polygon[i], polygon[(i + 1) % nvert], point))
+                    {
+                        wn--; // Decrease winding number
+                    }
+                }
+            }
+        }
+        return wn ? 1 : 0; // If winding number equals 0, point is outside polygon, else inside
+    }
+
+    // Convert vec2 to a ImVec2
+    ImVec2 castToImVec2(vec2 vec) {
+        return ImVec2(vec.x, vec.y);
+    }
+
+    // Convert ImVec2 to a vec2
+    vec2 castToVec2(ImVec2 vec) {
+        return vec2(vec.x, vec.y);
+    }
+
+    workTime time;
+
+    // Universal function for pnpoly algorithm visualization.
+    // Accepts a function pointer to the algorithm to use.
     imVec2pnpSet pnpolyUni(const std::vector<ImVec2>& points, const std::vector<ImVec2>& polygon, char(*func)(vec2, const std::vector<vec2>&))
     {
         imVec2pnpSet result;
         vec2pnpSet temp;
 
-        // Получаем из библиотечного типа ImVec2 данные для функций
+        // Get vec2 from ImVec2 for the algorithm
         std::vector<vec2> polygonVec2;
         for (auto& i : polygon)
             polygonVec2.push_back(castToVec2(i));
@@ -47,11 +86,10 @@ namespace pnpoly
         for (auto& i : points)
             pointsVec2.push_back(castToVec2(i));
 
-        //time.restart();
+        // Call the algorithm
+        time.start();
         for (auto& point : pointsVec2)
         {
-            // 0 - out, 1 - in, other - indef
-
             char res = func(point, polygonVec2);
             if (res == 0)
                 temp.Out.push_back(point);
@@ -60,11 +98,9 @@ namespace pnpoly
             else
                 temp.Indef.push_back(point);
         }
-        // time.stop();
+        time.stop();
 
-
-
-         // Получаем из библиотечного типа vec2 данные для ImGui
+        // Get ImVec2 from vec2 for the result output
         for (auto& i : temp.In)
             result.In.push_back(castToImVec2(i));
 
@@ -73,18 +109,14 @@ namespace pnpoly
 
         for (auto& i : temp.Indef)
             result.Indef.push_back(castToImVec2(i));
-
         return result;
     }
-
-
-
 }
 
 
-namespace PolyPoint
+namespace PNPolyViz
 {
-    // generate points
+    // Returns an array of randomly generated ImVec2 points
     std::vector<ImVec2> generateRandomPoints(size_t count)
     {
         std::vector<ImVec2> points;
@@ -92,12 +124,67 @@ namespace PolyPoint
         for (size_t i = 0; i < count; ++i)
         {
             //rand with rand signs
-            points.push_back(ImVec2((rand() % 500 - 250) * 0.99, (rand() % 500 - 250) * 0.99));
+            points.push_back(ImVec2((rand() % 500 - 250) * (float)0.99,
+                (rand() % 500 - 250) * (float)0.99));
         }
         return points;
     }
 
-    // Draw a whiteboard with points and lines
+    // Returns coordonates of center of whiteboard
+    ImVec2 getCenterOfWhiteboard()
+    {
+        ImVec2 center = ImGui::GetCursorScreenPos();
+        center.x += ImGui::GetWindowWidth() / 2;
+        center.y += ImGui::GetWindowHeight() / 2;
+        return center;
+    }
+
+    // Draws axis in the center of whiteboard
+    void drawAxis(ImU32 color)
+    {
+        ImVec2 center = getCenterOfWhiteboard();
+        ImGui::GetWindowDrawList()->AddLine(
+            ImVec2(center.x - ImGui::GetWindowWidth() / 2, center.y),
+            ImVec2(center.x + ImGui::GetWindowWidth() / 2, center.y),
+            color);
+        ImGui::GetWindowDrawList()->AddLine(
+            ImVec2(center.x, center.y - ImGui::GetWindowHeight() / 2),
+            ImVec2(center.x, center.y + ImGui::GetWindowHeight() / 2),
+            color);
+    }
+
+    // Centers points on whiteboard
+    void toCenterAndScale(std::vector<ImVec2>& points)
+    {
+        ImVec2 center = getCenterOfWhiteboard();
+        for (auto& i : points)
+        {
+            i.x = i.x * screenScale + center.x;
+            i.y = i.y * -screenScale + center.y; // Minus for a horizontal flip of the y axis
+        }
+    }
+
+    // Draws points with a given color
+    void drawPoints(std::vector<ImVec2> points, ImU32 color)
+    {
+        toCenterAndScale(points);
+        for (auto& point : points)
+        {
+            ImGui::GetWindowDrawList()->AddCircleFilled(point, 2, color);
+        }
+    }
+
+    // Draws a polygon with a given color
+    void drawPolygon(std::vector<ImVec2> polygon, ImU32 color)
+    {
+        toCenterAndScale(polygon);
+        for (size_t i = 0; i < polygon.size(); ++i)
+        {
+            ImGui::GetWindowDrawList()->AddLine(polygon[i], polygon[(i + 1) % polygon.size()], color);
+        }
+    }
+
+    // Draws a whiteboard (actually it's black color) with points and lines
     void WhiteBoard(const std::vector<ImVec2>& pointsIn,
         const std::vector<ImVec2>& pointsOut,
         const std::vector<ImVec2>& pointsIndef,
@@ -108,93 +195,22 @@ namespace PolyPoint
         std::vector<ImVec2> pointsIndefN = pointsIndef;
         std::vector<std::vector<ImVec2>> polygonsN = polygons;
 
-        // Get coordonates of center of whiteboard
-        ImVec2 center = ImGui::GetCursorScreenPos();
-        center.x += ImGui::GetWindowWidth() / 2;
-        center.y += ImGui::GetWindowHeight() / 2;
+        // Draw axis
+        drawAxis(crossColor);
 
-        // Draw a cross in the center of whiteboard
-        ImGui::GetWindowDrawList()->AddLine(
-            ImVec2(center.x - ImGui::GetWindowWidth() / 2, center.y),
-            ImVec2(center.x + ImGui::GetWindowWidth() / 2, center.y),
-            crossColor);
-        ImGui::GetWindowDrawList()->AddLine(
-            ImVec2(center.x, center.y - ImGui::GetWindowHeight() / 2),
-            ImVec2(center.x, center.y + ImGui::GetWindowHeight() / 2),
-            crossColor);
-        // Circle in the center
-        ImGui::GetWindowDrawList()->AddCircleFilled(center, 4, crossColor);
+        // Draw all points
+        drawPoints(pointsInN, inColor);
+        drawPoints(pointsOutN, outColor);
+        drawPoints(pointsIndefN, indefColor);
 
-
-        // get coordinates of down left corner of whiteboard
-        ImVec2 whiteboardPos = ImGui::GetCursorScreenPos();
-
-        // Add whiteboard coordinates to all points
-        for (auto& point : pointsInN)
-        {
-            point.x += center.x;
-            point.y *= -1;
-            point.y += center.y;
-        }
-        for (auto& point : pointsOutN)
-        {
-            point.x += center.x;
-            point.y *= -1;
-            point.y += center.y;
-        }
-        for (auto& point : pointsIndefN)
-        {
-            point.x += center.x;
-            point.y *= -1;
-            point.y += center.y;
-        }
-        // Add whiteboard coordinates to all polygons
+        // Draw polygons
         for (auto& polygon : polygonsN)
         {
-            for (auto& point : polygon)
-            {
-                point.x += center.x;
-                point.y *= -1;
-                point.y += center.y;
-
-            }
+            drawPolygon(polygon, polygonColor);
         }
-        // Draw points
-        for (auto& point : pointsInN)
-        {
-            ImGui::GetWindowDrawList()->AddCircleFilled(point, pointRadius, greenColor);
-        }
-        for (auto& point : pointsOutN)
-        {
-            ImGui::GetWindowDrawList()->AddCircleFilled(point, pointRadius, redColor);
-        }
-        for (auto& point : pointsIndefN)
-        {
-            ImGui::GetWindowDrawList()->AddCircleFilled(point, pointRadius, purpleColor);
-        }
-        // Draw lines
-
-        // Draw last line
-        if (polygonsN.size() > 0)
-        {
-            for (auto& polygon : polygonsN)
-            {
-                for (unsigned i = 0; i < polygon.size() - 1; i++)
-                {
-                    ImGui::GetWindowDrawList()->AddLine(polygon[i], polygon[i + 1], whiteColor);
-                }
-            }
-            ImGui::GetWindowDrawList()->AddLine(polygonsN[polygonsN.size() - 1]
-                [polygonsN[polygonsN.size() - 1].size() - 1], polygonsN[polygonsN.size() - 1][0], whiteColor);
-        }
-        // ConvexFill 
-        /*for (auto& polygon : polygonsN)
-        {
-            ImGui::GetWindowDrawList()->AddConvexPolyFilled(polygon.data(), polygon.size(), crossColor);
-        }*/
     }
 
-    void DoWork()
+    void doWork()
     {
         // DockSpaceOverview
         ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -214,60 +230,29 @@ namespace PolyPoint
         ImGui::End();
 
         // Prepare points
-        //std::vector<ImVec2> points = generateRandomPoints(10000);
-
         std::vector<ImVec2> points = OBJ::toImVec2("points10000");
 
         // Prepare polygon
         std::vector<std::vector<ImVec2>> polygons;
-
-        //std::vector<ImVec2> polygon = generateRandomPoints(0);
-
         std::vector<ImVec2> polygon = OBJ::toImVec2("polygonCrown");
 
         imVec2pnpSet pointSet = pnpoly::pnpolyUni(points, polygon, pnpoly::simpleSolution);
 
-        for (auto& point : pointSet.In)
-        {
-            point.x *= screenScale;
-            point.y *= screenScale;
-        }
-        for (auto& point : pointSet.Out)
-        {
-            point.x *= screenScale;
-            point.y *= screenScale;
-        }
-        for (auto& point : pointSet.Indef)
-        {
-            point.x *= screenScale;
-            point.y *= screenScale;
-        }
-        for (auto& point : polygon)
-        {
-            point.x *= screenScale;
-            point.y *= screenScale;
-        }
+        // Draw whiteboard
+        ImGui::Begin("Whiteboard", nullptr);
+        ImGui::GetWindowDrawList();
 
         if (polygon.size() > 0)
             polygons.push_back(polygon);
-
-        // draw whiteboard
-        ImGui::Begin("Whiteboard", nullptr);
-        ImDrawList* drawList = ImGui::GetWindowDrawList();
-
-        // time output
-
-
-
-        //ImGui::Text("FPS: %.1f | pointsIn: %d | pointsOut: %d | pointsIndef: %d | time: %s",
-        //    ImGui::GetIO().Framerate, pointSet.In.size(),
-        //    pointSet.Out.size(), pointSet.Indef.size(), time.getStringTime());
-        ImGui::Text("FPS: %.1f | pointsIn: %d | pointsOut: %d | pointsIndef: %d",
-            ImGui::GetIO().Framerate, pointSet.In.size(),
-            pointSet.Out.size(), pointSet.Indef.size());
-
         WhiteBoard(pointSet.In, pointSet.Out, pointSet.Indef, polygons);
+
+        ImGui::Text("FPS: %.1f | pointsIn: %d | pointsOut: %d | pointsIndef: %d | algTime: %s",
+            ImGui::GetIO().Framerate, pointSet.In.size(),
+            pointSet.Out.size(), pointSet.Indef.size(),
+            pnpoly::time.getStringTime().c_str());
+
         ImGui::End();
+
         //system("pause");
     }
 }
