@@ -154,7 +154,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         ImGui::NewFrame();
 
         // Start of program
-        PolyPoint::DoWork();
+        PNPolyViz::doWork();
 
         // End of program
 
