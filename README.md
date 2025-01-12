@@ -16,7 +16,7 @@ CD in directory:
 cd PNPolyVizualization
 ```
 
-Compile useing `make`:
+Compile using `make`:
 
 ```
 make -B
