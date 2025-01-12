@@ -1,11 +1,11 @@
-.PHONY: main
+.PHONY: main clear
 ifneq ($V,1)
 Q ?= @
 endif
 
 GXX = g++
-ERRORS = -Wall
-CFLAGS = -c $(ERRORS) -fPIC -O0
+ERRORS = -Wall -Wextra -Wpedantic -Werror -Wno-cast-function-type
+CFLAGS = -c $(ERRORS) -fPIC -O3
 BUILD_DIR = build
 EXE_NAME = pnp
 DLL_NAME = pnp
@@ -47,7 +47,7 @@ TARGET = linux
 endif
 
 ifeq ($(TARGET),windows)
-RM = cmd /c del /Q /F
+RM = cmd /c del /Q /F /S
 COPY = copy
 MOVE = move
 SYS_FLAGS = -D_WIN32 -DWIN32
@@ -101,7 +101,11 @@ ifeq ($(TARGET),windows)
 	$Q @if not exist $(BUILD_DIR)\src\imgui\misc\cpp mkdir $(BUILD_DIR)\src\imgui\misc\cpp
 else
 	$Q @mkdir -p $(BUILD_DIR)/src
-	$Q @mkdir -p $(BUILD_DIR)\src/imgui
-	$Q @mkdir -p $(BUILD_DIR)\src/imgui/backends
-	$Q @mkdir -p $(BUILD_DIR)\src/imgui/misc/cpp
+	$Q @mkdir -p $(BUILD_DIR)/src/imgui
+	$Q @mkdir -p $(BUILD_DIR)/src/imgui/backends
+	$Q @mkdir -p $(BUILD_DIR)/src/imgui/misc/cpp
 endif
+
+clear:
+	$Q $(ECHO) [clearing build directory]
+	$Q $(RM) $(BUILD_DIR) 

@@ -230,11 +230,11 @@ namespace PNPolyViz
         ImGui::End();
 
         // Prepare points
-        std::vector<ImVec2> points = OBJ::toImVec2("points10000");
+        std::vector<ImVec2> points = OBJ::toImVec2("points");
 
         // Prepare polygon
         std::vector<std::vector<ImVec2>> polygons;
-        std::vector<ImVec2> polygon = OBJ::toImVec2("polygonCrown");
+        std::vector<ImVec2> polygon = OBJ::toImVec2("polygon");
 
         imVec2pnpSet pointSet = pnpoly::pnpolyUni(points, polygon, pnpoly::simpleSolution);
 
@@ -246,7 +246,7 @@ namespace PNPolyViz
             polygons.push_back(polygon);
         WhiteBoard(pointSet.In, pointSet.Out, pointSet.Indef, polygons);
 
-        ImGui::Text("FPS: %.1f | pointsIn: %d | pointsOut: %d | pointsIndef: %d | algTime: %s",
+        ImGui::Text("FPS: %.1f | pointsIn: %lld | pointsOut: %lld | pointsIndef: %lld | algTime: %s",
             ImGui::GetIO().Framerate, pointSet.In.size(),
             pointSet.Out.size(), pointSet.Indef.size(),
             pnpoly::time.getStringTime().c_str());
