@@ -1,4 +1,4 @@
-﻿#include "PolyPoint.h"
+﻿#include "PolyPoint.hpp"
 
 namespace pnpoly
 {

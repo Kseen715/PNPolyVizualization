@@ -13,7 +13,7 @@
 #include <dxgi1_4.h>
 #include <tchar.h>
 
-#include "PolyPoint.h"
+#include "PolyPoint.hpp"
 
 #ifdef _DEBUG
 #define DX12_ENABLE_DEBUG_LAYER

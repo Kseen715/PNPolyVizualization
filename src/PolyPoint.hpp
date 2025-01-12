@@ -2,7 +2,6 @@
 
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "workTimeLib.h"
 
 #include <vector>
 #include <algorithm>
@@ -11,7 +10,8 @@
 #include <string>
 #include <iostream>
 
-#include "objLib.h"
+#include "workTimeLib.hpp"
+#include "objLib.hpp"
 
 #ifndef IM_VEC_2_PNP_SET
 #define IM_VEC_2_PNP_SET
