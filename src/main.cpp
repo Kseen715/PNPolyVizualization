@@ -117,8 +117,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
     // - Read 'docs/FONTS.md' for more instructions and details.
     // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    //io.Fonts->AddFontDefault();
-    io.Fonts->AddFontFromFileTTF("../../misc/fonts/JetBrainsMono-Regular.ttf", 18.0f);
+    io.Fonts->AddFontDefault();
+    io.Fonts->AddFontFromFileTTF("../imgui/misc/fonts/Karla-Regular.ttf", 18.0f);
     //io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\JetBrainsMono-Regular.ttf", 18.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
     //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);

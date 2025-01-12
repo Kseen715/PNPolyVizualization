@@ -36,8 +36,8 @@ namespace pnpoly
 
 namespace PNPolyViz
 {
-    constexpr float pointRadius = 2;
-    constexpr float screenScale = 1;
+    constexpr float pointRadius = 1.5;
+    constexpr float screenScale = 2.5;
     const ImU32 crossColor = IM_COL32(255, 255, 255, 25);
     const ImU32 inColor = IM_COL32(55, 255, 55, 255);
     const ImU32 outColor = IM_COL32(255, 55, 55, 255);

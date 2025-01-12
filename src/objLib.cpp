@@ -1,5 +1,6 @@
 #include "objLib.h"
 
+
 namespace OBJ
 {
     void toObj(const std::vector<vec2>& points, std::string fileName)
@@ -77,6 +78,7 @@ namespace OBJ
             }
             file.close();
         }
+        std::cout << "Points: " << points.size() << std::endl;
         return points;
     }
 
